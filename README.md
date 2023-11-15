@@ -1,22 +1,22 @@
 Welcome to the Yarn Inventory and Project Tracking Tool, a comprehensive solution designed for yarn enthusiasts, crocheters, and knitters alike. This project serves as a central hub for managing yarn inventory, tracking project progress, and maintaining a detailed log of various creative endeavors.
 
 Key Features:
--Yarn Inventory Management:
--Add, edit, and delete yarn inventory items.
--Include details such as yarn type, brand, color (optional), weight, quantity, lot number (optional), and notes (optional).
+- Yarn Inventory Management:
+- Add, edit, and delete yarn inventory items.
+- Include details such as yarn type, brand, color (optional), weight, quantity, lot number (optional), and notes (optional).
 
 Project Progress Tracking:
--Utilize timers to monitor progress on ongoing projects.
--Record needle size, eye size (optional), and additional progress notes (optional).
+- Utilize timers to monitor progress on ongoing projects.
+- Record needle size, eye size (optional), and additional progress notes (optional).
 
 Project Logging:
--Log multiple crochet and knitting projects with ease.
--Capture project details, including project name, type, start and end dates, and project notes.
+- Log multiple crochet and knitting projects with ease.
+- Capture project details, including project name, type, start and end dates, and project notes.
 
 Tech Stack:
--Front-end: React for a responsive and user-friendly interface.
--Back-end: Node.js to create a robust API for data storage and retrieval.
--Database: Custom API for secure and organized data storage.
+- Front-end: React for a responsive and user-friendly interface.
+- Back-end: Node.js to create a robust API for data storage and retrieval.
+- Database: Custom API for secure and organized data storage.
 
 Project Goals:
 Our primary objectives include:
@@ -31,10 +31,10 @@ Data Usage and Collection:
 Our custom API will store and manage data related to yarn inventory, project progress, and logged projects. Users can input details such as yarn type, completed projects, project progress, needle size, lot number (optional), color (optional), eye size (optional), and notes (optional). The API ensures secure storage and retrieval of this information.
 
 Project Approach:
--API Challenges: Addressing data validation challenges and ensuring data integrity, especially handling optional information gracefully.
--Functionality: Offering users the ability to perform CRUD operations, track project progress, and log multiple crochet and knitting projects.
--User Flow: Users can seamlessly navigate the application, add inventory items, track project progress, and log their creative projects using the react-router library.
--Additional Features: Considering stretch goals, we aim to implement features like goal-setting, progress tracking systems, and project deadlines.
+- API Challenges: Addressing data validation challenges and ensuring data integrity, especially handling optional information gracefully.
+- Functionality: Offering users the ability to perform CRUD operations, track project progress, and log multiple crochet and knitting projects.
+- User Flow: Users can seamlessly navigate the application, add inventory items, track project progress, and log their creative projects using the react-router library.
+- Additional Features: Considering stretch goals, we aim to implement features like goal-setting, progress tracking systems, and project deadlines.
 
 
 # Getting Started with Create React App
