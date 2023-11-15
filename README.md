@@ -2,27 +2,27 @@ Welcome to the Yarn Inventory and Project Tracking Tool, a comprehensive solutio
 
 Key Features:
 Yarn Inventory Management:
-
 Add, edit, and delete yarn inventory items.
 Include details such as yarn type, brand, color (optional), weight, quantity, lot number (optional), and notes (optional).
-Project Progress Tracking:
 
+Project Progress Tracking:
 Utilize timers to monitor progress on ongoing projects.
 Record needle size, eye size (optional), and additional progress notes (optional).
-Project Logging:
 
+Project Logging:
 Log multiple crochet and knitting projects with ease.
 Capture project details, including project name, type, start and end dates, and project notes.
+
 Tech Stack:
 Front-end: React for a responsive and user-friendly interface.
 Back-end: Node.js to create a robust API for data storage and retrieval.
 Database: Custom API for secure and organized data storage.
 Project Goals:
 Our primary objectives include:
-
 Provide a seamless and intuitive user experience for managing yarn-related information.
 Develop a back-end API to handle data storage and retrieval securely.
 Enable users to track progress using timers and log detailed information about their creative projects.
+
 User Demographics:
 This tool caters to a diverse demographic of crafters, from beginners to experienced artisans, who share a common passion for crocheting and knitting. The application is designed to be user-friendly, ensuring accessibility for crafters of all levels.
 
@@ -31,12 +31,10 @@ Our custom API will store and manage data related to yarn inventory, project pro
 
 Project Approach:
 API Challenges: Addressing data validation challenges and ensuring data integrity, especially handling optional information gracefully.
-
 Functionality: Offering users the ability to perform CRUD operations, track project progress, and log multiple crochet and knitting projects.
-
 User Flow: Users can seamlessly navigate the application, add inventory items, track project progress, and log their creative projects using the react-router library.
-
 Additional Features: Considering stretch goals, we aim to implement features like goal-setting, progress tracking systems, and project deadlines.
+
 
 # Getting Started with Create React App
 
