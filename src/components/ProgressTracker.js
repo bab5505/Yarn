@@ -257,7 +257,10 @@ class TrackerItem extends Component {
           )}
           <button onClick={this.handleResetTimer}>Reset Timer</button>
           <button onClick={this.handleEdit}>Customize</button>
+<<<<<<< HEAD
           <button onClick={this.handleView}>View</button>
+=======
+>>>>>>> 2531a99 (Update ProgressTracker.js)
           <button onClick={() => removeTracker(tracker.name)}>Remove</button>
         </div>
         {tracker.editMode && (
