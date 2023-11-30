@@ -105,8 +105,12 @@ class ProgressTracker extends Component {
     }));
   };
 
+  viewTracker = (selectedTracker) => {
+    this.setState({ selectedTracker });
+  };
+
   render() {
-    const { trackers, newItem } = this.state;
+    const { trackers, newItem, selectedTracker } = this.state;
 
     return (
       <div>
@@ -130,13 +134,40 @@ class ProgressTracker extends Component {
               stopTimer={this.stopTimer}
               resetTimer={this.resetTimer}
               updateTrackerTime={this.updateTrackerTime}
-            />
-          ))}
-        </ul>
-      </div>
-    );
-  }
-}
+              viewTracker={this.viewTracker}  // New prop passed to TrackerItem
+              />
+              ))}
+            </ul>
+            {selectedTracker && (
+              <div>
+                <h3>Tracker Details</h3>
+                <p>
+                  <strong>Name:</strong> {selectedTracker.name}
+                </p>
+                <p>
+                  <strong>Size:</strong> {selectedTracker.size}
+                </p>
+                <p>
+                  <strong>Lot:</strong> {selectedTracker.lot}
+                </p>
+                <p>
+                  <strong>Color:</strong> {selectedTracker.color}
+                </p>
+                <p>
+                  <strong>Eye Size:</strong> {selectedTracker.eyeSize}
+                </p>
+                <p>
+                  <strong>Notes:</strong> {selectedTracker.notes}
+                </p>
+                <p>
+                  <strong>Elapsed Time:</strong> {selectedTracker.time} seconds
+                </p>
+              </div>
+            )}
+          </div>
+        );
+      }
+    }
 
 class TrackerItem extends Component {
   constructor(props) {
@@ -149,6 +180,10 @@ class TrackerItem extends Component {
       editedNotes: props.tracker.notes,
     };
   }
+
+  handleView = () => {
+    this.props.viewTracker(this.props.tracker);
+  };
 
   handleEdit = () => {
     this.props.toggleEditMode(this.props.tracker.name);
@@ -222,6 +257,7 @@ class TrackerItem extends Component {
           )}
           <button onClick={this.handleResetTimer}>Reset Timer</button>
           <button onClick={this.handleEdit}>Customize</button>
+          <button onClick={this.handleView}>View</button>
           <button onClick={() => removeTracker(tracker.name)}>Remove</button>
         </div>
         {tracker.editMode && (
