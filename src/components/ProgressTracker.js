@@ -152,11 +152,17 @@ class TrackerItem extends Component {
 
   handleEdit = () => {
     this.props.toggleEditMode(this.props.tracker.name);
-    this.props.startTimer(this.props.tracker.name);
   };
 
   handleUpdate = () => {
-    const { editedSize, editedLot, editedColor, editedEyeSize, editedNotes } = this.state;
+    const {
+      editedSize,
+      editedLot,
+      editedColor,
+      editedEyeSize,
+      editedNotes,
+    } = this.state;
+
     const updatedData = {
       size: editedSize,
       lot: editedLot,
@@ -164,6 +170,7 @@ class TrackerItem extends Component {
       eyeSize: editedEyeSize,
       notes: editedNotes,
     };
+
     this.props.updateTracker(this.props.tracker.name, updatedData);
     this.props.stopTimer(this.props.tracker.name);
   };
@@ -180,6 +187,26 @@ class TrackerItem extends Component {
     this.props.resetTimer(this.props.tracker.name);
   };
 
+  handleSizeChange = (e) => {
+    this.setState({ editedSize: e.target.value });
+  };
+
+  handleLotChange = (e) => {
+    this.setState({ editedLot: e.target.value });
+  };
+
+  handleColorChange = (e) => {
+    this.setState({ editedColor: e.target.value });
+  };
+
+  handleEyeSizeChange = (e) => {
+    this.setState({ editedEyeSize: e.target.value });
+  };
+
+  handleNotesChange = (e) => {
+    this.setState({ editedNotes: e.target.value });
+  };
+
   render() {
     const { tracker, removeTracker } = this.props;
     const { name, time, timerIsRunning } = tracker;
@@ -194,9 +221,24 @@ class TrackerItem extends Component {
             <button onClick={this.handleStartTimer}>Start Timer</button>
           )}
           <button onClick={this.handleResetTimer}>Reset Timer</button>
-          <button onClick={this.handleEdit}>Edit</button>
-          <button onClick={removeTracker}>Remove</button>
+          <button onClick={this.handleEdit}>Customize</button>
+          <button onClick={() => removeTracker(tracker.name)}>Remove</button>
         </div>
+        {tracker.editMode && (
+          <div>
+            <label>Size:</label>
+            <input type="text" value={this.state.editedSize} onChange={this.handleSizeChange} />
+            <label>Lot:</label>
+            <input type="text" value={this.state.editedLot} onChange={this.handleLotChange} />
+            <label>Color:</label>
+            <input type="text" value={this.state.editedColor} onChange={this.handleColorChange} />
+            <label>Eye Size:</label>
+            <input type="text" value={this.state.editedEyeSize} onChange={this.handleEyeSizeChange} />
+            <label>Notes:</label>
+            <textarea value={this.state.editedNotes} onChange={this.handleNotesChange} />
+            <button onClick={this.handleUpdate}>Update</button>
+          </div>
+        )}
         <div>
           <span>Elapsed Time: {time} seconds</span>
         </div>
@@ -206,3 +248,4 @@ class TrackerItem extends Component {
 }
 
 export default ProgressTracker;
+
