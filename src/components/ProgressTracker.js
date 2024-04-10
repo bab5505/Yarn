@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import API from './Api'; 
 
 class ProgressTracker extends Component {
   constructor(props) {
@@ -6,31 +7,62 @@ class ProgressTracker extends Component {
     this.state = {
       trackers: [],
       newItem: '',
+      selectedTracker: null,
     };
   }
+
+  componentDidMount() {
+    this.fetchTrackerData();
+  }
+
+  fetchTrackerData = async () => {
+    try {
+      const response = await API.getTrackers(); // Adjust based on your API methods
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      this.setState({ trackers: data });
+    } catch (error) {
+      console.error('Error fetching trackers:', error);
+    }
+  };
 
   addTracker = () => {
     const { trackers, newItem } = this.state;
 
     if (newItem) {
-      this.setState({
-        trackers: [
-          ...trackers,
-          {
-            name: newItem,
-            time: 0, // Initialize timer to 0
-            editMode: false,
-            timerIsRunning: false, // Indicates if the timer is running
-          },
-        ],
-        newItem: '',
-      });
+      API.createTracker({
+        name: newItem,
+        size: '',
+        lot: '',
+        color: '',
+        eyeSize: '',
+        notes: '',
+        time: 0,
+        editMode: false,
+        timerIsRunning: false,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status} ${response.statusText}`);
+          }
+          return response.data;
+        })
+        .then((data) => {
+          this.setState({
+            trackers: [...trackers, data],
+            newItem: '',
+          });
+        })
+        .catch((error) => console.error('Error adding tracker:', error));
     }
   };
 
   removeTracker = (trackerName) => {
     this.setState((prevState) => ({
       trackers: prevState.trackers.filter((tracker) => tracker.name !== trackerName),
+      selectedTracker: null, // Clear selected tracker when removed
     }));
   };
 
@@ -134,40 +166,40 @@ class ProgressTracker extends Component {
               stopTimer={this.stopTimer}
               resetTimer={this.resetTimer}
               updateTrackerTime={this.updateTrackerTime}
-              viewTracker={this.viewTracker}  // New prop passed to TrackerItem
-              />
-              ))}
-            </ul>
-            {selectedTracker && (
-              <div>
-                <h3>Tracker Details</h3>
-                <p>
-                  <strong>Name:</strong> {selectedTracker.name}
-                </p>
-                <p>
-                  <strong>Size:</strong> {selectedTracker.size}
-                </p>
-                <p>
-                  <strong>Lot:</strong> {selectedTracker.lot}
-                </p>
-                <p>
-                  <strong>Color:</strong> {selectedTracker.color}
-                </p>
-                <p>
-                  <strong>Eye Size:</strong> {selectedTracker.eyeSize}
-                </p>
-                <p>
-                  <strong>Notes:</strong> {selectedTracker.notes}
-                </p>
-                <p>
-                  <strong>Elapsed Time:</strong> {selectedTracker.time} seconds
-                </p>
-              </div>
-            )}
+              viewTracker={this.viewTracker}
+            />
+          ))}
+        </ul>
+        {selectedTracker && (
+          <div>
+            <h3>Tracker Details</h3>
+            <p>
+              <strong>Name:</strong> {selectedTracker.name}
+            </p>
+            <p>
+              <strong>Size:</strong> {selectedTracker.size}
+            </p>
+            <p>
+              <strong>Lot:</strong> {selectedTracker.lot}
+            </p>
+            <p>
+              <strong>Color:</strong> {selectedTracker.color}
+            </p>
+            <p>
+              <strong>Eye Size:</strong> {selectedTracker.eyeSize}
+            </p>
+            <p>
+              <strong>Notes:</strong> {selectedTracker.notes}
+            </p>
+            <p>
+              <strong>Elapsed Time:</strong> {selectedTracker.time} seconds
+            </p>
           </div>
-        );
-      }
-    }
+        )}
+      </div>
+    );
+  }
+}
 
 class TrackerItem extends Component {
   constructor(props) {

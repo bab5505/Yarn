@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import API from './Api';
 
 class Projects extends Component {
   constructor(props) {
@@ -6,14 +7,39 @@ class Projects extends Component {
     this.state = {
       projects: [],
       newProject: '',
-      newProjectDescription: '', 
-      newProjectHookSize: '', 
-      newProjectNeedleSize: '', 
+      newProjectDescription: '',
+      newProjectHookSize: '',
+      newProjectNeedleSize: '',
       expandedProjects: {},
       editableProjects: {},
       editedProjectText: '',
     };
   }
+
+  componentDidMount() {
+    this.fetchProjects();
+  }
+
+  fetchProjects = async () => {
+    try {
+      const response = await API.getProjects(); // Adjust based on your API methods
+      
+      console.log('API response:', response);
+  
+      if (response.status !== 200) {
+        throw new Error(`Server returned ${response.status} ${response.statusText}`);
+      }
+  
+      // Check if data is present in the response
+      const responseData = response.data || [];
+  
+      this.setState({ projects: responseData });
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+  
+  
 
   addProject = () => {
     const {
@@ -27,18 +53,28 @@ class Projects extends Component {
     if (newProject) {
       const newProjectItem = {
         name: newProject,
-        description: newProjectDescription, 
-        hookSize: newProjectHookSize, 
-        needleSize: newProjectNeedleSize, 
+        description: newProjectDescription,
+        hookSize: newProjectHookSize,
+        needleSize: newProjectNeedleSize,
       };
 
-      this.setState({
-        projects: [...projects, newProjectItem],
-        newProject: '',
-        newProjectDescription: '', 
-        newProjectHookSize: '', 
-        newProjectNeedleSize: '', 
-      });
+      API.createProject(newProjectItem)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status} ${response.statusText}`);
+          }
+          return response.data;
+        })
+        .then((data) => {
+          this.setState({
+            projects: [...projects, data],
+            newProject: '',
+            newProjectDescription: '',
+            newProjectHookSize: '',
+            newProjectNeedleSize: '',
+          });
+        })
+        .catch((error) => console.error('Error adding project:', error));
     }
   };
 

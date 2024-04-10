@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory HTML Page</title>
+</head>
+<body>
+    <h1>Inventory HTML Page</h1>
+
+    <div id="inventory">
+        <!-- The content will be dynamically populated using JavaScript -->
+    </div>
+
+    <script>
+        // Fetch inventory data and update the DOM
+        fetch('/inventory')
+            .then(response => response.json())
+            .then(data => {
+                const inventoryContainer = document.getElementById('inventory');
+                data.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.innerHTML = `<strong>Name:</strong> ${item.name} <br /> <strong>Description:</strong> ${item.description || 'N/A'}`;
+                    inventoryContainer.appendChild(itemElement);
+                });
+            })
+            .catch(error => console.error('Error fetching inventory:', error));
+    </script>
+</body>
+</html>

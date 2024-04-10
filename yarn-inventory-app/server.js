@@ -1,11 +1,18 @@
 const express = require('express');
+const cors = require('cors');
+const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
 const bodyParser = require('body-parser');
+const ejs = require('ejs');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
+// Enable CORS
+app.use(cors());
 app.use(bodyParser.json());
+app.set('view engine', 'ejs', ejs); // Set EJS as the template engine
+app.set('views', path.join(__dirname, 'views'));
 
 // Create a Sequelize instance and connect to PostgreSQL
 const sequelize = new Sequelize('yarn_inventory', 'robert', 'cookers5', {
@@ -36,21 +43,42 @@ const Project = sequelize.define('Project', {
   },
 });
 
+const Progress = sequelize.define('Progress', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+});
+
 // Define API routes
-app.get('/inventory', async (req, res) => {
+app.get('/', async (req, res) => {
   try {
-    const inventory = await InventoryItem.findAll();
-    res.json(inventory);
+    res.render('home');
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).send('Internal Server Error');
   }
 });
 
-app.post('/inventory', async (req, res) => {
-  const { name, description } = req.body;
+app.get('/inventory', async (req, res) => {
   try {
-    const newItem = await InventoryItem.create({ name, description });
-    res.status(201).json(newItem);
+    // Sample data
+    const sampleInventory = [
+      { name: 'Yarn A', description: 'Soft and colorful' },
+      { name: 'Yarn B', description: 'Durable and versatile' },
+    ];
+
+    // Uncomment the line below if you want to save the sample data to the database
+    // await InventoryItem.bulkCreate(sampleInventory);
+
+    res.json(sampleInventory);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
@@ -65,13 +93,61 @@ app.get('/projects', async (req, res) => {
   }
 });
 
-app.post('/projects', async (req, res) => {
-  const { name, description } = req.body;
+app.get('/progress', async (req, res) => {
   try {
-    const newProject = await Project.create({ name, description });
-    res.status(201).json(newProject);
+    const progress = await Progress.findAll();
+    res.json(progress);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Handle POST request to add items
+app.post('/add-item', async (req, res) => {
+  try {
+    const { type, name, description } = req.body;
+
+    // Determine which model to use based on the type
+    const model = type === 'yarn' ? InventoryItem : Project;
+
+    // Create a new item
+    const newItem = await model.create({
+      name,
+      description,
+    });
+
+    res.json(newItem);
+  } catch (error) {
+    console.error('Error adding item:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Define routes to render HTML pages
+app.get('/inventory-html', async (req, res) => {
+  try {
+    const inventory = await InventoryItem.findAll();
+    res.render('inventory', { items: inventory });
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/projects-html', async (req, res) => {
+  try {
+    const projects = await Project.findAll();
+    res.render('projects', { projects: projects });
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/progress-html', async (req, res) => {
+  try {
+    const progress = await Progress.findAll();
+    res.render('progress', { progress: progress });
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
   }
 });
 
