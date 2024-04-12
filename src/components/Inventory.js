@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import API from './Api';
 
 class Inventory extends Component {
@@ -25,7 +26,7 @@ class Inventory extends Component {
 
       if (response.status === 200) {
         const responseData = response.data || [];
-        this.setState({ items: responseData }); // Change state name to 'items'
+        this.setState({ items: responseData });
       } else {
         throw new Error(`Server returned ${response.status} ${response.statusText}`);
       }

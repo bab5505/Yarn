@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
+const BACKEND_BASE_URL = 'http://localhost:5000'; // Assuming backend server is running on port 5000
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BACKEND_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,16 +12,12 @@ const api = axios.create({
 const API = {
   getAllYarns: () => api.get('/yarns'),
   createYarn: (data) => api.post('/yarns', data),
-  getInventory: () => api.get('/inventory')
-    .then((response) => response.data)
-    .catch((error) => {
-      console.error('Error fetching inventory:', error);
-      throw error; // rethrow the error to maintain consistency in error handling
-    }),
+  getInventory: () => api.get('/inventory'),
   deleteYarn: (itemName) => api.delete(`/yarns/${itemName}`),
-  getProjects: () => api.get('/projects'),
-  getTrackers: () => api.get('/trackers'),
-  createProject: (projectData) => api.post('/projects', projectData) // Added createProject function
+  getProjects: () => api.get('/projects'), // Backend API for projects
+  getTrackers: () => api.get('/trackers'), // Backend API for trackers
+  createProject: (projectData) => api.post('/projects', projectData), // Backend API for creating projects
+  createTracker: (trackerData) => api.post('/trackers', trackerData), // Backend API for creating trackers
 };
 
 export default API;

@@ -22,24 +22,17 @@ class Projects extends Component {
 
   fetchProjects = async () => {
     try {
-      const response = await API.getProjects(); // Adjust based on your API methods
-      
+      const response = await API.getProjects();
       console.log('API response:', response);
-  
       if (response.status !== 200) {
         throw new Error(`Server returned ${response.status} ${response.statusText}`);
       }
-  
-      // Check if data is present in the response
       const responseData = response.data || [];
-  
       this.setState({ projects: responseData });
     } catch (error) {
       console.error('Error fetching projects:', error);
     }
   };
-  
-  
 
   addProject = () => {
     const {
@@ -60,7 +53,7 @@ class Projects extends Component {
 
       API.createProject(newProjectItem)
         .then((response) => {
-          if (!response.ok) {
+          if (response.status !== 201) {
             throw new Error(`Server returned ${response.status} ${response.statusText}`);
           }
           return response.data;
@@ -80,7 +73,7 @@ class Projects extends Component {
 
   removeProject = (project) => {
     this.setState((prevState) => {
-      const newProjects = prevState.projects.filter((p) => p !== project);
+      const newProjects = prevState.projects.filter((p) => p.name !== project.name);
       const newExpandedProjects = { ...prevState.expandedProjects };
       delete newExpandedProjects[project.name];
       const newEditableProjects = { ...prevState.editableProjects };
@@ -136,37 +129,8 @@ class Projects extends Component {
     this.setState({ editedProjectText: e.target.value });
   };
 
-  handleProjectDescriptionChange = (e, project) => {
-    const updatedDescription = e.target.value;
-    this.setState((prevState) => ({
-      projects: prevState.projects.map((p) =>
-        p.name === project.name
-          ? { ...p, description: updatedDescription }
-          : p
-      ),
-    }));
-  };
-
-  handleHookSizeChange = (e, project) => {
-    const updatedHookSize = e.target.value;
-    this.setState((prevState) => ({
-      projects: prevState.projects.map((p) =>
-        p.name === project.name
-          ? { ...p, hookSize: updatedHookSize }
-          : p
-      ),
-    }));
-  };
-
-  handleNeedleSizeChange = (e, project) => {
-    const updatedNeedleSize = e.target.value;
-    this.setState((prevState) => ({
-      projects: prevState.projects.map((p) =>
-        p.name === project.name
-          ? { ...p, needleSize: updatedNeedleSize }
-          : p
-      ),
-    }));
+  handleInputChange = (e, field) => {
+    this.setState({ [field]: e.target.value });
   };
 
   render() {
@@ -188,25 +152,25 @@ class Projects extends Component {
           type="text"
           placeholder="Project Name"
           value={newProject}
-          onChange={(e) => this.setState({ newProject: e.target.value })}
+          onChange={(e) => this.handleInputChange(e, 'newProject')}
         />
         <input
           type="text"
           placeholder="Description"
           value={newProjectDescription}
-          onChange={(e) => this.setState({ newProjectDescription: e.target.value })}
+          onChange={(e) => this.handleInputChange(e, 'newProjectDescription')}
         />
         <input
           type="text"
           placeholder="Hook Size"
           value={newProjectHookSize}
-          onChange={(e) => this.setState({ newProjectHookSize: e.target.value })}
+          onChange={(e) => this.handleInputChange(e, 'newProjectHookSize')}
         />
         <input
           type="text"
           placeholder="Needle Size"
           value={newProjectNeedleSize}
-          onChange={(e) => this.setState({ newProjectNeedleSize: e.target.value })}
+          onChange={(e) => this.handleInputChange(e, 'newProjectNeedleSize')}
         />
         <button onClick={this.addProject}>Add Project</button>
         <ul>
@@ -241,7 +205,7 @@ class Projects extends Component {
                     {editableProjects[project.name] ? (
                       <textarea
                         value={project.description}
-                        onChange={(e) => this.handleProjectDescriptionChange(e, project)}
+                        onChange={(e) => this.handleInputChange(e, 'description')}
                       />
                     ) : (
                       <span>{project.description}</span>
@@ -253,7 +217,7 @@ class Projects extends Component {
                       <input
                         type="text"
                         value={project.hookSize}
-                        onChange={(e) => this.handleHookSizeChange(e, project)}
+                        onChange={(e) => this.handleInputChange(e, 'hookSize')}
                       />
                     ) : (
                       <span>{project.hookSize}</span>
@@ -265,7 +229,7 @@ class Projects extends Component {
                       <input
                         type="text"
                         value={project.needleSize}
-                        onChange={(e) => this.handleNeedleSizeChange(e, project)}
+                        onChange={(e) => this.handleInputChange(e, 'needleSize')}
                       />
                     ) : (
                       <span>{project.needleSize}</span>
