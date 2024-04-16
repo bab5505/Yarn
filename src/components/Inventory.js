@@ -38,31 +38,41 @@ class Inventory extends Component {
 
   addItem = (type) => {
     const { newItem, newDescription } = this.state;
-
+  
     if (newItem) {
-      API.createYarn({
-        type,
-        name: newItem,
-        description: newDescription,
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Server returned ${response.status} ${response.statusText}`);
-          }
-          return response.data;
-        })
-        .then((data) => {
-          this.setState((prevState) => ({
-            items: [...prevState.items, data],
-            newItem: '',
-            newDescription: '',
-          }));
-        })
-        .catch((error) => console.error('Error adding item:', error));
+      let createMethod;
+      if (type === 'yarns') {
+        createMethod = API.createYarn;
+      } else if (type === 'projects') {
+        createMethod = API.createProject;
+      }
+  
+      if (createMethod) {
+        createMethod({ name: newItem, description: newDescription })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Server returned ${response.status} ${response.statusText}`);
+            }
+            return response.data;
+          })
+          .then((data) => {
+            this.setState((prevState) => ({
+              items: [...prevState.items, data],
+              newItem: '',
+              newDescription: '',
+              error: null,
+            }));
+          })
+          .catch((error) => console.error('Error adding item:', error));
+      } else {
+        console.error('Invalid type provided');
+      }
     } else {
       console.error('New item is empty');
     }
   };
+  
+  
 
   removeItem = (item) => {
     this.setState((prevState) => {
