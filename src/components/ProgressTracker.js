@@ -17,7 +17,7 @@ class ProgressTracker extends Component {
 
   fetchTrackerData = async () => {
     try {
-      const response = await API.getTrackers(); // Adjust based on your API methods
+      const response = await API.getTrackers();
       if (!response.ok) {
         throw new Error(`Server returned ${response.status} ${response.statusText}`);
       }
@@ -27,10 +27,11 @@ class ProgressTracker extends Component {
       console.error('Error fetching trackers:', error);
     }
   };
+  
 
   addTracker = () => {
     const { trackers, newItem } = this.state;
-
+  
     if (newItem) {
       API.createTracker({
         name: newItem,
@@ -58,6 +59,7 @@ class ProgressTracker extends Component {
         .catch((error) => console.error('Error adding tracker:', error));
     }
   };
+  
 
   removeTracker = (trackerName) => {
     this.setState((prevState) => ({
@@ -78,14 +80,24 @@ class ProgressTracker extends Component {
   };
 
   updateTracker = (trackerName, updatedData) => {
-    this.setState((prevState) => ({
-      trackers: prevState.trackers.map((tracker) => {
-        if (tracker.name === trackerName) {
-          return { ...tracker, ...updatedData, editMode: false };
+    API.updateTracker(trackerName, updatedData)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server returned ${response.status} ${response.statusText}`);
         }
-        return tracker;
-      }),
-    }));
+        return response.data;
+      })
+      .then((updatedTracker) => {
+        this.setState((prevState) => ({
+          trackers: prevState.trackers.map((tracker) => {
+            if (tracker.name === trackerName) {
+              return { ...tracker, ...updatedTracker, editMode: false };
+            }
+            return tracker;
+          }),
+        }));
+      })
+      .catch((error) => console.error('Error updating tracker:', error));
   };
 
   startTimer = (trackerName) => {

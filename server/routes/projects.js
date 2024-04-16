@@ -11,6 +11,7 @@ const pool = new Pool({
   port: 5432,
 });
 
+// GET all projects
 router.get('/', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -21,7 +22,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/projects', async (req, res) => {
+// POST to create a new project
+router.post('/', async (req, res) => {
   const newProject = req.body.project;
   const client = await pool.connect();
   try {
@@ -32,6 +34,7 @@ router.post('/projects', async (req, res) => {
   }
 });
 
+// DELETE a project by name
 router.delete('/:project', async (req, res) => {
   const projectToRemove = req.params.project;
   const client = await pool.connect();
@@ -39,6 +42,23 @@ router.delete('/:project', async (req, res) => {
     const result = await client.query('DELETE FROM projects WHERE name = $1', [projectToRemove]);
     if (result.rowCount > 0) {
       res.json({ message: 'Project removed' });
+    } else {
+      res.status(404).json({ message: 'Project not found' });
+    }
+  } finally {
+    client.release();
+  }
+});
+
+// PUT to update a project by name
+router.put('/:project', async (req, res) => {
+  const projectToUpdate = req.params.project; // Extract project name from URL parameter
+  const updatedProject = req.body.project; // Assuming the request body contains { project: { name, description } }
+  const client = await pool.connect();
+  try {
+    const result = await client.query('UPDATE projects SET name = $1, description = $2 WHERE name = $3', [updatedProject.name, updatedProject.description, projectToUpdate]);
+    if (result.rowCount > 0) {
+      res.json({ message: 'Project updated' });
     } else {
       res.status(404).json({ message: 'Project not found' });
     }

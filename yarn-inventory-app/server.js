@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000;
 // Enable CORS
 app.use(cors());
 app.use(bodyParser.json());
-app.set('view engine', 'ejs', ejs); // Set EJS as the template engine
+app.set('view engine', 'ejs', ejs);
 app.set('views', path.join(__dirname, 'views'));
 
 // Create a Sequelize instance and connect to PostgreSQL
@@ -69,16 +69,8 @@ app.get('/', async (req, res) => {
 
 app.get('/inventory', async (req, res) => {
   try {
-    // Sample data
-    const sampleInventory = [
-      { name: 'Yarn A', description: 'Soft and colorful' },
-      { name: 'Yarn B', description: 'Durable and versatile' },
-    ];
-
-    // Uncomment the line below if you want to save the sample data to the database
-    // await InventoryItem.bulkCreate(sampleInventory);
-
-    res.json(sampleInventory);
+    const inventoryItems = await InventoryItem.findAll();
+    res.json(inventoryItems);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }

@@ -41,9 +41,9 @@ class Inventory extends Component {
   
     if (newItem) {
       let createMethod;
-      if (type === 'yarns') {
+      if (type === 'yarn') {
         createMethod = API.createYarn;
-      } else if (type === 'projects') {
+      } else if (type === 'project') {
         createMethod = API.createProject;
       }
   
