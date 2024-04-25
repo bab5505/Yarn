@@ -11,7 +11,8 @@ const pool = new Pool({
   port: 5432,
 });
 
-router.get('/', async (req, res) => {
+// GET all inventory items
+router.get('/yarns', async (req, res) => {
   const client = await pool.connect();
   try {
     const result = await client.query('SELECT * FROM yarn_inventory');
@@ -21,7 +22,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+// POST a new inventory item
+router.post('/yarns', async (req, res) => {
   const newItem = req.body.item;
   const client = await pool.connect();
   try {
@@ -32,11 +34,29 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.delete('/:item', async (req, res) => {
-  const itemToRemove = req.params.item;
+// PUT (update) an existing inventory item by ID
+router.put('/:id', async (req, res) => {
+  const itemId = req.params.id;
+  const updatedItem = req.body.item; // Assuming you send the updated item data in the request body
   const client = await pool.connect();
   try {
-    const result = await client.query('DELETE FROM yarn_inventory WHERE name = $1', [itemToRemove]);
+    const result = await client.query('UPDATE yarn_inventory SET name = $1 WHERE id = $2', [updatedItem.name, itemId]);
+    if (result.rowCount > 0) {
+      res.json({ message: 'Item updated in yarn inventory' });
+    } else {
+      res.status(404).json({ message: 'Item not found in yarn inventory' });
+    }
+  } finally {
+    client.release();
+  }
+});
+
+// DELETE an inventory item by ID
+router.delete('/:id', async (req, res) => {
+  const itemId = req.params.id;
+  const client = await pool.connect();
+  try {
+    const result = await client.query('DELETE FROM yarn_inventory WHERE id = $1', [itemId]);
     if (result.rowCount > 0) {
       res.json({ message: 'Item removed from yarn inventory' });
     } else {

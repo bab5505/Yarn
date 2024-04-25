@@ -1,6 +1,12 @@
+import axios from 'axios';
 import React, { Component } from 'react';
 
-import API from './Api';
+const api = axios.create({
+  baseURL: 'http://localhost:5000', // Change this to your backend API URL
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 class Inventory extends Component {
   constructor(props) {
@@ -20,7 +26,7 @@ class Inventory extends Component {
 
   fetchInventoryData = async () => {
     try {
-      const response = await API.getInventory();
+      const response = await api.get('/inventory');
 
       console.log('API response:', response);
 
@@ -34,59 +40,35 @@ class Inventory extends Component {
       console.error('Error fetching inventory:', error);
     }
   };
-  
 
-  addItem = (type) => {
+  addItem = async (type) => {
     const { newItem, newDescription } = this.state;
-  
+
     if (newItem) {
-      let createMethod;
-      if (type === 'yarn') {
-        createMethod = API.createYarn;
-      } else if (type === 'project') {
-        createMethod = API.createProject;
-      }
-  
-      if (createMethod) {
-        createMethod({ name: newItem, description: newDescription })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Server returned ${response.status} ${response.statusText}`);
-            }
-            return response.data;
-          })
-          .then((data) => {
-            this.setState((prevState) => ({
-              items: [...prevState.items, data],
-              newItem: '',
-              newDescription: '',
-              error: null,
-            }));
-          })
-          .catch((error) => console.error('Error adding item:', error));
-      } else {
-        console.error('Invalid type provided');
+      try {
+        const response = await api.post(`/${type}s`, { name: newItem, description: newDescription });
+        if (response.status === 200) {
+          const newItemData = response.data;
+          this.setState((prevState) => ({
+            items: [...prevState.items, newItemData],
+            newItem: '',
+            newDescription: '',
+          }));
+        } else {
+          throw new Error(`Server returned ${response.status} ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('Error adding item:', error);
       }
     } else {
       console.error('New item is empty');
     }
   };
-  
-  
 
   removeItem = (item) => {
-    this.setState((prevState) => {
-      const newItems = prevState.items.filter((i) => i !== item);
-      const newExpandedItems = { ...prevState.expandedItems };
-      delete newExpandedItems[item.name];
-      const newEditableItems = { ...prevState.editableItems };
-      delete newEditableItems[item.name];
-      return {
-        items: newItems,
-        expandedItems: newExpandedItems,
-        editableItems: newEditableItems,
-      };
-    });
+    this.setState((prevState) => ({
+      items: prevState.items.filter((i) => i !== item),
+    }));
   };
 
   toggleItemDetails = (item) => {
@@ -104,17 +86,13 @@ class Inventory extends Component {
         ...prevState.editableItems,
         [item.name]: !prevState.editableItems[item.name],
       },
-      editedItemText: prevState.editableItems[item.name]
-        ? prevState.editedItemText
-        : item.name,
+      editedItemText: prevState.editableItems[item.name] ? prevState.editedItemText : item.name,
     }));
   };
 
   saveEditedItem = (item) => {
     this.setState((prevState) => ({
-      items: prevState.items.map((i) =>
-        i.name === item.name ? { ...i, name: prevState.editedItemText } : i
-      ),
+      items: prevState.items.map((i) => (i.name === item.name ? { ...i, name: prevState.editedItemText } : i)),
       editableItems: { ...prevState.editableItems, [item.name]: false },
     }));
   };
@@ -152,13 +130,11 @@ class Inventory extends Component {
         <ul>
           {items.map((item, index) => (
             <li key={index}>
-              {/* Placeholder for rendering item details */}
               <div>
                 <strong>Name:</strong> {item.name}
                 <br />
                 <strong>Description:</strong> {item.description}
               </div>
-              {/* Placeholder for your buttons */}
               <button onClick={() => this.removeItem(item)}>Remove</button>
               <button onClick={() => this.toggleItemEdit(item)}>
                 {editableItems[item.name] ? 'Cancel' : 'Edit'}
@@ -167,11 +143,7 @@ class Inventory extends Component {
                 {expandedItems[item.name] ? 'Hide' : 'View'}
               </button>
               {expandedItems[item.name] && (
-                <div>
-                  {item.type === 'yarn'
-                    ? `Yarn Inventory: ${item.name} Details...`
-                    : `Completed Project: ${item.name} Details...`}
-                </div>
+                <div>{item.type === 'yarn' ? `Yarn Inventory: ${item.name} Details...` : `Project: ${item.name} Details...`}</div>
               )}
               {editableItems[item.name] && (
                 <button onClick={() => this.saveEditedItem(item)}>Save</button>

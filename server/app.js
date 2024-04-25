@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3001' }));
 app.use(express.json());
 
 // Sample data for the yarn inventory, projects, and progress
