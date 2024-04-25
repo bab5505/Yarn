@@ -155,6 +155,19 @@ app.get('/trackers', async (req, res) => {
   }
 });
 
+app.post('/trackers', async (req, res) => {
+  try {
+    console.log('POST /trackers request received');
+    // Add logic to handle the POST request for trackers
+    res.json({ message: 'Tracker added successfully' });
+  } catch (error) {
+    console.error('Error adding tracker:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
 // Define routes to render HTML pages
 app.get('/inventory-html', async (req, res) => {
   try {
