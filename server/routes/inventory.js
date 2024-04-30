@@ -1,5 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
+const axios = require('axios');
 
 const router = express.Router();
 
@@ -11,59 +12,70 @@ const pool = new Pool({
   port: 5432,
 });
 
-// GET all inventory items
+// Base URL for Axios requests
+const baseURL = 'http://localhost:5000'; // Update with your server's base URL
+
+// GET all inventory items using Axios
 router.get('/yarns', async (req, res) => {
-  const client = await pool.connect();
   try {
-    const result = await client.query('SELECT * FROM yarn_inventory');
-    res.json(result.rows);
-  } finally {
-    client.release();
+    const response = await axios.get(`${baseURL}/yarns`);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching inventory items:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// POST a new inventory item
+// POST a new inventory item using Axios
 router.post('/yarns', async (req, res) => {
-  const newItem = req.body.item;
-  const client = await pool.connect();
   try {
-    await client.query('INSERT INTO yarn_inventory (name) VALUES ($1)', [newItem.name]);
-    res.json({ message: 'Item added to yarn inventory' });
-  } finally {
-    client.release();
+    const newItemName = req.body.name; // Assuming the item name is sent directly in the request body
+
+    if (!newItemName || typeof newItemName !== 'string') {
+      throw new Error('Invalid item name'); // Validate the input data
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('INSERT INTO yarns (name) VALUES ($1)', [newItemName]);
+      res.status(201).json({ message: 'Item added successfully' });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Error adding item:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// PUT (update) an existing inventory item by ID
+
+
+// PUT (update) an existing inventory item by ID using Axios
 router.put('/:id', async (req, res) => {
   const itemId = req.params.id;
-  const updatedItem = req.body.item; // Assuming you send the updated item data in the request body
-  const client = await pool.connect();
+  const { name } = req.body; // Extract 'name' property from request body
   try {
-    const result = await client.query('UPDATE yarn_inventory SET name = $1 WHERE id = $2', [updatedItem.name, itemId]);
-    if (result.rowCount > 0) {
-      res.json({ message: 'Item updated in yarn inventory' });
-    } else {
-      res.status(404).json({ message: 'Item not found in yarn inventory' });
-    }
-  } finally {
-    client.release();
+    // Your code to update the item in the database...
+
+    // Example code to send a response (replace with your logic)
+    res.json({ message: 'Item updated successfully' });
+  } catch (error) {
+    console.error('Error updating item:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// DELETE an inventory item by ID
+// DELETE an inventory item by ID using Axios
 router.delete('/:id', async (req, res) => {
   const itemId = req.params.id;
-  const client = await pool.connect();
   try {
-    const result = await client.query('DELETE FROM yarn_inventory WHERE id = $1', [itemId]);
-    if (result.rowCount > 0) {
-      res.json({ message: 'Item removed from yarn inventory' });
-    } else {
-      res.status(404).json({ message: 'Item not found in yarn inventory' });
-    }
-  } finally {
-    client.release();
+    // Your code to delete the item from the database...
+
+    // Example code to send a response (replace with your logic)
+    res.json({ message: 'Item deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting item:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

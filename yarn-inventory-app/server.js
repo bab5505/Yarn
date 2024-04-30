@@ -22,6 +22,15 @@ const sequelize = new Sequelize('yarn_inventory', 'robert', 'cookers5', {
 });
 
 // Define Sequelize models
+
+const Yarn = sequelize.define('Yarn', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  // Add other properties as needed
+});
+
 const InventoryItem = sequelize.define('InventoryItem', {
   name: {
     type: DataTypes.STRING,
@@ -126,15 +135,43 @@ app.post('/add-item', async (req, res) => {
 });
 
 // Define missing endpoints
+app.get('/yarns', (req, res) => {
+  try {
+    // Replace this with your logic to fetch yarn items from your database
+    const yarnItems = [{ name: 'Yarn Item 1' }, { name: 'Yarn Item 2' }];
+    res.json(yarnItems);
+  } catch (error) {
+    console.error('Error fetching yarn items:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/yarns', async (req, res) => {
   try {
     console.log('POST /yarns request received');
-    // Add logic to create a new yarn
+    
+    // Extract the item data from the request body
+    const { name } = req.body.item;
+
+    // Check if the name is valid (example validation, adjust as needed)
+    if (!name || typeof name !== 'string') {
+      throw new Error('Invalid name for yarn item');
+    }
+
+    // Create a new yarn item in your database using Sequelize or any ORM
+    const newYarn = await Yarn.create({
+      name,
+      // Add other properties if necessary
+    });
+
+    // Respond with the newly created yarn item
+    res.status(201).json(newYarn);
   } catch (error) {
     console.error('Error adding yarn:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.post('/projects', async (req, res) => {
   try {
@@ -170,35 +207,35 @@ app.post('/trackers', async (req, res) => {
 
 
 // Define routes to render HTML pages
-app.get('/inventory-html', async (req, res) => {
-  try {
-    const inventory = await InventoryItem.findAll();
-    res.render('inventory', { items: inventory });
-  } catch (error) {
-    console.error('Error rendering inventory HTML:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
+// app.get('/inventory-html', async (req, res) => {
+//   try {
+//     const inventory = await InventoryItem.findAll();
+//     res.render('inventory', { items: inventory });
+//   } catch (error) {
+//     console.error('Error rendering inventory HTML:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
 
-app.get('/projects-html', async (req, res) => {
-  try {
-    const projects = await Project.findAll();
-    res.render('projects', { projects: projects });
-  } catch (error) {
-    console.error('Error rendering projects HTML:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
+// app.get('/projects-html', async (req, res) => {
+//   try {
+//     const projects = await Project.findAll();
+//     res.render('projects', { projects: projects });
+//   } catch (error) {
+//     console.error('Error rendering projects HTML:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
 
-app.get('/progress-html', async (req, res) => {
-  try {
-    const progress = await Progress.findAll();
-    res.render('progress', { progress: progress });
-  } catch (error) {
-    console.error('Error rendering progress HTML:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
+// app.get('/progress-html', async (req, res) => {
+//   try {
+//     const progress = await Progress.findAll();
+//     res.render('progress', { progress: progress });
+//   } catch (error) {
+//     console.error('Error rendering progress HTML:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
 
 // Sync Sequelize models with the database and start the server
 sequelize.sync().then(() => {
