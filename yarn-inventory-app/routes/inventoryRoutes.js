@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); 
-const { query } = require('express');
+const pool = require('../db');
 
 // Get all inventory items
 router.get('/inventory', async (req, res) => {

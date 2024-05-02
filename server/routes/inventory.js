@@ -29,10 +29,10 @@ router.get('/yarns', async (req, res) => {
 // POST a new inventory item using Axios
 router.post('/yarns', async (req, res) => {
   try {
-    const newItemName = req.body.name; // Assuming the item name is sent directly in the request body
+    const newItemName = req.body.name;
 
     if (!newItemName || typeof newItemName !== 'string') {
-      throw new Error('Invalid item name'); // Validate the input data
+      throw new Error('Invalid item name');
     }
 
     const client = await pool.connect();
@@ -47,6 +47,7 @@ router.post('/yarns', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 
