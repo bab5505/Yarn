@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from './api'; // Your API file
+import API from './Api'; 
 
 const FormComponent = () => {
   const [formData, setFormData] = useState({

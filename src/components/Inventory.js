@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import api from './Api'; // Import the Axios instance
+import API from './Api'; // Import the API instance
 
 class Inventory extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class Inventory extends Component {
     const { yarnType, completedProjects } = this.state;
 
     try {
-      const response = await api.post('/inventory', { yarnType, completedProjects });
+      const response = await API.createYarn({ yarnType, completedProjects });
       console.log('Item added successfully:', response.data);
     } catch (error) {
       console.error('Error adding item:', error);
