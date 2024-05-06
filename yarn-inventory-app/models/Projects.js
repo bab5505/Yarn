@@ -1,24 +1,14 @@
-const { Sequelize, DataTypes } = require('sequelize');
-
-const sequelize = new Sequelize('yarn_inventory', 'robert', 'cookers5', {
-  host: 'localhost',
-  dialect: 'postgres',
-});
+const { DataTypes } = require('sequelize');
+const sequelize = require('../db');
 
 const Project = sequelize.define('Project', {
-  description: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  hookSize: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  needleSize: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  // Add other fields as needed
+  project_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  user_id: { type: DataTypes.INTEGER, allowNull: false },
+  project_name: { type: DataTypes.STRING(100), allowNull: false },
+  project_type: { type: DataTypes.STRING(20) },
+  start_date: { type: DataTypes.DATE },
+  end_date: { type: DataTypes.DATE },
+  project_notes: { type: DataTypes.TEXT },
 });
 
 module.exports = Project;

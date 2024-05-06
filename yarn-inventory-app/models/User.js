@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Assuming you have your Sequelize instance in a 'db.js' file
+const sequelize = require('../db'); 
 
 const User = sequelize.define('User', {
   username: {

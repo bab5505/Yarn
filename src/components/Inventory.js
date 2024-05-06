@@ -34,7 +34,7 @@ class Inventory extends Component {
         <h2>Add New Item</h2>
         <form onSubmit={this.handleSubmit}>
           <label>
-            Yarn Type:
+            Yarn Info:
             <input
               type="text"
               name="yarnType"
@@ -43,7 +43,7 @@ class Inventory extends Component {
             />
           </label>
           <label>
-            Completed Projects:
+            Inventory of Completed Projects:
             <input
               type="text"
               name="completedProjects"

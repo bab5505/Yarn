@@ -1,11 +1,11 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const Progress = sequelize.define('Progress', {
+const InventoryItem = sequelize.define('InventoryItem', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   user_id: { type: DataTypes.INTEGER, allowNull: false },
-  description: { type: DataTypes.TEXT },
-  date_completed: { type: DataTypes.DATE },
+  name: { type: DataTypes.STRING(255) },
+  quantity: { type: DataTypes.INTEGER },
 });
 
-module.exports = Progress;
+module.exports = InventoryItem;

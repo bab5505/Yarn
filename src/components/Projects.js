@@ -235,6 +235,7 @@ class Projects extends Component {
                       <span>{project.needleSize}</span>
                     )}
                   </div>
+                  
                 </div>
               )}
             </li>

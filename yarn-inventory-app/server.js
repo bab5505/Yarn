@@ -1,8 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize } = require('sequelize');
 const bodyParser = require('body-parser');
+const Yarn = require('./models/YarnModel');
+const InventoryItem = require('./models/InventoryItem');
+const Project = require('./models/Projects');
+const Progress = require('./models/Progress');
+const sequelize = require('./db');
 // const ejs = require('ejs');
 
 const app = express();
@@ -15,58 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.set('view engine', 'ejs');
 // app.set('views', path.join(__dirname, 'views'));
 
-// Create a Sequelize instance and connect to PostgreSQL
-const sequelize = new Sequelize('yarn_inventory', 'robert', 'cookers5', {
-  host: 'localhost',
-  dialect: 'postgres',
-});
-
-// Define Sequelize models
-
-const Yarn = sequelize.define('Yarn', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  // Add other properties as needed
-});
-
-const InventoryItem = sequelize.define('InventoryItem', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-});
-
-const Project = sequelize.define('Project', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-});
-
-const Progress = sequelize.define('Progress', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-});
 
 // Define API routes
 app.get('/', async (req, res) => {
